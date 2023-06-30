@@ -1,12 +1,34 @@
-export class DailyCost {
-  id!: number
-  cost!: number
-  name?: string
-  date!: Date
+export enum CostType {
+  unknown = 'unknown',
+  meal = 'meal',
+  transportation = 'transportation',
+  rental = 'rental',
+  entertainment = 'entertainment',
+}
+export interface DailyCost {
+  id: string
+  cost: number
+  name: string
+  date: string | Date
+  type: CostType
+  createdAt?: Date
+  updatedAt?: Date
+  deletedAt?: Date
 }
 
-export class DailyCostQuery {
+export interface TotalDailyCost {
+  date: string
+  cost: number
+  records: DailyCost[]
+}
+
+export interface DailyCostGroup {
+  [key: string]: TotalDailyCost
+}
+
+export interface DailyCostQuery {
   cost?: number
   name?: string
-  data?: Date
+  data?: string | Date
+  type?: CostType
 }

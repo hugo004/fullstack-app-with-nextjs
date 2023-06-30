@@ -28,13 +28,15 @@ export async function GET(request: NextRequest) {
             }
           : undefined,
     },
+    orderBy: {
+      date: 'desc',
+    },
   })
   return NextResponse.json(result, { status: 200 })
 }
 
 export async function POST(request: NextRequest) {
   const payload: DailyCost = await request.json()
-  console.log(payload)
 
   if (!payload.cost || !payload.date) {
     return NextResponse.json({

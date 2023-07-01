@@ -420,7 +420,7 @@ export default function RecordTable(props: Props) {
 
   async function onSubmitFormRecord(data: CreateUpdateDailyCostPayload) {
     try {
-      const res = await trigger({ ...data, type: CostType.unknown })
+      trigger({ ...data, type: data.type ?? CostType.unknown })
     } catch (err) {
       console.error(err)
     } finally {

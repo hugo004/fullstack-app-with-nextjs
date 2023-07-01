@@ -1,4 +1,4 @@
-## This Project
+## The Project
 
 This project is a simple CMS portal page to record your daily money spending
 ![alt text](https://github.com/hugo004/fullstack-app-with-nextjs/blob/main/public/dashboard.png?raw=true)

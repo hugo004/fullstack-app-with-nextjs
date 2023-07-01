@@ -437,7 +437,7 @@ export default function RecordTable(props: Props) {
           onClose={() => setOpen(false)}
           onSubmit={onSubmitFormRecord}
         />
-        <Paper variant='outlined'>
+        <Paper variant='outlined' sx={{ overflow: 'hidden' }}>
           <Toolbar variant='dense'>
             <Typography variant='h6' color='inherit'>
               Records
@@ -460,8 +460,8 @@ export default function RecordTable(props: Props) {
               </IconButton>
             </div>
           </Toolbar>
-          <TableContainer component={Paper}>
-            <Table>
+          <TableContainer component={Paper} sx={{ maxHeight: 350 }}>
+            <Table size='small'>
               <TableHead>
                 <TableRow>
                   <TableCell />

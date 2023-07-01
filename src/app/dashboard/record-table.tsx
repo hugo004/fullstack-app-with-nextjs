@@ -460,7 +460,7 @@ export default function RecordTable(props: Props) {
               </IconButton>
             </div>
           </Toolbar>
-          <TableContainer component={Paper} sx={{ maxHeight: 350 }}>
+          <TableContainer component={Paper}>
             <Table size='small'>
               <TableHead>
                 <TableRow>

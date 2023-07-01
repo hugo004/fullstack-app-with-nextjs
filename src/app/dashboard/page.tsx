@@ -23,7 +23,7 @@ export default function Dashboard() {
       >
         Dashboard
       </Typography>
-      <div className='h-full py-3'>
+      <div className='h-full py-5'>
         <div className='h-full flex flex-row flex-wrap space-between justify-center'>
           <div className='w-full md:w-full lg:w-1/2'>
             <DailyCostCircle className='text-black' data={data ?? {}} />

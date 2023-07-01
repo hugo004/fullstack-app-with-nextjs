@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
 
   const result = await prisma.dailyCost.findUnique({
     where: {
-      id: Number(id),
+      id,
     },
   })
 

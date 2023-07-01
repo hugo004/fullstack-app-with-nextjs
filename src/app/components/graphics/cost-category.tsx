@@ -42,7 +42,11 @@ export default function CostCategoryBarChart(props: Props) {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey='cost' fill='#8884d8' />
+            <Bar dataKey={CostType.entertainment} stackId='a' fill='#8884d8' />
+            <Bar dataKey={CostType.meal} stackId='a' fill='#82ca9d' />
+            <Bar dataKey={CostType.rental} stackId='a' fill='#ffc658' />
+            <Bar dataKey={CostType.transportation} stackId='a' fill='#FFBB28' />
+            <Bar dataKey={CostType.unknown} stackId='a' fill='#FF8042' />
           </BarChart>
         </ResponsiveContainer>
       </div>

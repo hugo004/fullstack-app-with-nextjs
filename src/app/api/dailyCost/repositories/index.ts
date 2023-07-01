@@ -20,6 +20,7 @@ export interface TotalDailyCost {
   date: string
   cost: number
   records: DailyCost[]
+  [typeCount: string]: any // cannot set to number type (don't know why)
 }
 
 export interface DailyCostGroup {

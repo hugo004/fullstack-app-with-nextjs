@@ -10,7 +10,7 @@ export function useFetchRecord() {
 
     const groupData: { [key: string]: TotalDailyCost } = {}
     res.forEach((e) => {
-      const key = moment(e.createdAt).format(DateFormat)
+      const key = moment(e.date).format(DateFormat)
       if (groupData[key]) {
         groupData[key].records.push(e)
         groupData[key].cost += Number(e.cost)
@@ -18,7 +18,7 @@ export function useFetchRecord() {
         groupData[key] = {
           date: key,
           records: [e],
-          cost: 0,
+          cost: Number(e.cost),
         }
       }
     })

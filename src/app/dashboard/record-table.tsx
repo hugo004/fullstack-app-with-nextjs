@@ -31,6 +31,8 @@ import {
 import {
   Add,
   Close,
+  Delete,
+  Edit,
   FirstPage,
   KeyboardArrowDown,
   KeyboardArrowLeft,

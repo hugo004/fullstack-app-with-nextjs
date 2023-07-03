@@ -31,7 +31,7 @@ export default function DailyCostCircle(props: Props) {
   const [todayCost, setTodayCost] = useState(props.data?.[today]?.cost ?? 0)
 
   useEffect(() => {
-    setTodayCost(props.data?.[today]?.cost)
+    setTodayCost(props.data?.[today]?.cost ?? 0)
   }, [props.data])
 
   return (

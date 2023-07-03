@@ -50,13 +50,18 @@ import {
 } from '../api/dailyCost/repositories'
 import { DateFormat, FormatDateTimeString, TimeFormat } from '@/utils/format'
 import useSWRMutation from 'swr/mutation'
+import {
+  useCreateRecord,
+  useDeleteRecord,
+  useUpdateRecord,
+} from '../hooks/useRecords'
 
 const cols = ['date', 'cost']
 const rowsPerPage = 5
 const page = 10
 
 interface CreateUpdateDailyCostPayload extends Omit<DailyCost, 'id'> {
-  id?: number
+  id?: string
 }
 
 interface TablePaginationActionsProps {
@@ -67,6 +72,12 @@ interface TablePaginationActionsProps {
     event: React.MouseEvent<HTMLButtonElement>,
     newPage: number
   ) => void
+}
+
+interface TableRowProps {
+  row: TotalDailyCost
+  onEdit: (data: DailyCost) => void
+  onDelete: (data: DailyCost) => void
 }
 
 interface Props extends Omit<HTMLProps<HTMLDivElement>, 'data'> {
@@ -143,7 +154,31 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
   )
 }
 
+const initFormData = (data?: DailyCost) => {
+  return {
+    name: {
+      value: data?.name ?? '',
+      error: false,
+      required: true,
+      errorMessage: 'Please input english only',
+      pattern: /\w+/,
+    },
+    cost: { value: data?.cost ?? 0 },
+    type: { value: data?.type ?? CostType.unknown },
+    date: {
+      value: moment(data?.date).format(DateFormat) ?? '',
+      required: true,
+      errorMessage: 'required field',
+    },
+    time: {
+      value: moment(data?.date).format(TimeFormat) ?? '',
+      required: true,
+      errorMessage: 'required field',
+    },
+  }
+}
 const RecordForm = (props: {
+  value?: DailyCost
   open: boolean
   loading: boolean
   onClose: () => void
@@ -157,27 +192,11 @@ const RecordForm = (props: {
       errorMessage?: string
       pattern?: RegExp
     }
-  }>({
-    name: {
-      value: '',
-      error: false,
-      required: true,
-      errorMessage: 'Please input english only',
-      pattern: /\w+/,
-    },
-    cost: { value: 0 },
-    type: { value: CostType.unknown },
-    date: {
-      value: '',
-      required: true,
-      errorMessage: 'required field',
-    },
-    time: {
-      value: '',
-      required: true,
-      errorMessage: 'required field',
-    },
-  })
+  }>(initFormData(props.value))
+
+  useEffect(() => {
+    setFormValue(initFormData(props.value))
+  }, [props.value])
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     const { name, value, required } = e.target
@@ -214,6 +233,7 @@ const RecordForm = (props: {
 
     if (isValid) {
       const submitData: CreateUpdateDailyCostPayload = {
+        id: props.value?.id,
         name: formValue['name'].value as string,
         cost: formValue['cost'].value as number,
         type: formValue['type'].value as CostType,
@@ -337,9 +357,8 @@ const RecordForm = (props: {
   )
 }
 
-const Row = (props: { row: TotalDailyCost }) => {
+const Row = (props: TableRowProps) => {
   const [open, setOpen] = useState(false)
-  const [opened, setOpened] = useState<DailyCost>()
 
   return (
     <>
@@ -368,6 +387,7 @@ const Row = (props: { row: TotalDailyCost }) => {
                       <TableCell align='right'>Time</TableCell>
                       <TableCell align='right'>Cost (JPY)</TableCell>
                       <TableCell align='right'>Type</TableCell>
+                      <TableCell align='right'>Actions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -375,10 +395,26 @@ const Row = (props: { row: TotalDailyCost }) => {
                       <TableRow key={r.id}>
                         <TableCell align='right'>{r.name}</TableCell>
                         <TableCell align='right'>
-                          {moment(r.createdAt).format(TimeFormat)}
+                          {moment(r.date).format(TimeFormat)}
                         </TableCell>
                         <TableCell align='right'>{r.cost}</TableCell>
                         <TableCell align='right'>{r.type}</TableCell>
+                        <TableCell align='right'>
+                          <IconButton
+                            size='small'
+                            aria-label='edit-btn'
+                            onClick={() => props.onEdit(r)}
+                          >
+                            <Edit />
+                          </IconButton>
+                          <IconButton
+                            size='small'
+                            aria-label='delete-btn'
+                            onClick={() => props.onDelete(r)}
+                          >
+                            <Delete />
+                          </IconButton>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -394,33 +430,23 @@ const Row = (props: { row: TotalDailyCost }) => {
 
 export default function RecordTable(props: Props) {
   const [open, setOpen] = useState(false)
+  const [currentRecord, setCurrentRecord] = useState<DailyCost>()
 
-  const { trigger } = useSWRMutation(
-    '/api/dailyCost',
-    async (url: string, payload: { arg: CreateUpdateDailyCostPayload }) => {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload.arg),
-      })
-
-      if (!response.ok) {
-        throw new Error('An error occurred during fetch')
-      }
-
-      return response.json()
-    }
-  )
+  const { trigger: createRecord } = useCreateRecord()
+  const { trigger: updateRecord } = useUpdateRecord()
+  const { trigger: deleteRecord } = useDeleteRecord()
 
   function handleChangePage() {}
 
   function handleChangeRowsPerPage() {}
 
-  async function onSubmitFormRecord(data: CreateUpdateDailyCostPayload) {
+  function onSubmitFormRecord(data: CreateUpdateDailyCostPayload) {
     try {
-      trigger({ ...data, type: data.type ?? CostType.unknown })
+      if (data.id) {
+        updateRecord(data as unknown as DailyCost)
+      } else {
+        createRecord({ ...data, type: data.type ?? CostType.unknown })
+      }
     } catch (err) {
       console.error(err)
     } finally {
@@ -428,10 +454,28 @@ export default function RecordTable(props: Props) {
     }
   }
 
+  function onEditFormRecord(data: DailyCost) {
+    setCurrentRecord(data)
+    setOpen(true)
+  }
+
+  function onDeleteFormRecord(data: DailyCost) {
+    if (!data.id) {
+      return
+    }
+
+    try {
+      deleteRecord({ id: data.id })
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   return (
     <>
       <div {...props}>
         <RecordForm
+          value={currentRecord}
           open={open}
           loading={false}
           onClose={() => setOpen(false)}
@@ -473,7 +517,12 @@ export default function RecordTable(props: Props) {
                 {Object.keys(props.data ?? {})?.map((k) => (
                   <>
                     {props.data?.[k] && (
-                      <Row key={k} row={props.data?.[k]}></Row>
+                      <Row
+                        key={k}
+                        row={props.data?.[k]}
+                        onEdit={onEditFormRecord}
+                        onDelete={onDeleteFormRecord}
+                      ></Row>
                     )}
                   </>
                 ))}

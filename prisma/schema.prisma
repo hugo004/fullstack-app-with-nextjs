@@ -15,6 +15,7 @@ model DailyCost {
   cost      Decimal   @db.Money
   name      String    @db.VarChar(255)
   type      CostType  @default(unknown)
+  date      DateTime
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
   deletedAt DateTime?

@@ -28,8 +28,8 @@ export function useFetchRecord() {
       } else {
         groupData[key] = {
           date: key,
-          records: [e]
-          // cost: Number(e.cost)
+          records: [e],
+          cost: Number(e.cost)
         }
       }
     })

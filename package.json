@@ -47,7 +47,9 @@
     "src/**/*.{js,jsx,ts,tsx}": "eslint"
   },
   "husky": {
-    "pre-commit": "pnpm lint-staged",
-    "pre-push": "npx tsc"
+    "hooks": {
+      "pre-commit": "pnpm lint-staged",
+      "pre-push": "npx tsc"
+    }
   }
 }

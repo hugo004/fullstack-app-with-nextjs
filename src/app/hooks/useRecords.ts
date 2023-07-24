@@ -2,7 +2,7 @@ import useSWR from 'swr'
 import {
   CostType,
   DailyCost,
-  TotalDailyCost,
+  TotalDailyCost
 } from '../api/dailyCost/repositories'
 import moment from 'moment'
 import { DateFormat } from '@/utils/format'
@@ -29,7 +29,7 @@ export function useFetchRecord() {
         groupData[key] = {
           date: key,
           records: [e],
-          cost: Number(e.cost),
+          cost: Number(e.cost)
         }
       }
     })
@@ -45,9 +45,9 @@ export function useCreateRecord() {
       const response = await fetch(url, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(payload.arg),
+        body: JSON.stringify(payload.arg)
       })
 
       if (!response.ok) {
@@ -66,9 +66,9 @@ export function useUpdateRecord() {
       const response = await fetch(`${url}/${payload.arg.id}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(payload.arg),
+        body: JSON.stringify(payload.arg)
       })
 
       if (!response.ok) {
@@ -85,7 +85,7 @@ export function useDeleteRecord() {
     '/api/dailyCost',
     async (url: string, payload: { arg: { id: string } }) => {
       const response = await fetch(`${url}/${payload.arg.id}`, {
-        method: 'DELETE',
+        method: 'DELETE'
       })
 
       if (!response.ok) {

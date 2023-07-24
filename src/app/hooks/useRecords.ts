@@ -1,9 +1,5 @@
 import useSWR from 'swr'
-import {
-  CostType,
-  DailyCost,
-  TotalDailyCost
-} from '../api/dailyCost/repositories'
+import { DailyCost, TotalDailyCost } from '../api/dailyCost/repositories'
 import moment from 'moment'
 import { DateFormat } from '@/utils/format'
 import useSWRMutation from 'swr/mutation'
@@ -28,8 +24,8 @@ export function useFetchRecord() {
       } else {
         groupData[key] = {
           date: key,
-          records: [e]
-          // cost: Number(e.cost)
+          // records: [e]
+          cost: Number(e.cost)
         }
       }
     })
